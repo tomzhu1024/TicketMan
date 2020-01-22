@@ -1,0 +1,86 @@
+{% extends "TemplateNavBar.html" %}
+{% block title %}Customer Flight History{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="history icon"></i>
+            <div class="content">
+                Customer Flight History
+            </div>
+        </h2>
+        <div class="ui segment">
+            <form class="ui large form" method="post">
+                <div class="field">
+                    <label>Customer Email</label>
+                    <div class="ui search">
+                        <div class="ui left icon input">
+                            <i class="mail icon"></i>
+                            <input name="customer_email" class="prompt" placeholder="Type to search..." type="text"
+                                   required>
+                        </div>
+                        <div class="results"></div>
+                    </div>
+                </div>
+                <button class="ui large primary button" type="submit" style="float: right;">
+                    <i class="search icon"></i>
+                    Search
+                </button>
+                <div style="clear: both"></div>
+            </form>
+        </div>
+        {% if data %}
+            <div class="ui segment">
+                <table class="ui striped table">
+                    <thead>
+                    <tr>
+                        {% for col in head %}
+                            <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in data %}
+                        <tr>
+                            {% for col in row %}
+                                <td>{{ col }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('POST', '{{ url_for('get_all_customer_emails') }}', true);
+        httpRequest.send();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                var response = JSON.parse(httpRequest.responseText);
+                var content = [];
+                for (var i = 0; i < response.length; i++) {
+                    content.push({'title': response[i]});
+                }
+                $('.ui.search').search({source: content});
+            }
+        };
+    </script>
+{% endblock %}

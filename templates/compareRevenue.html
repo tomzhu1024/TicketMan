@@ -1,0 +1,118 @@
+{% extends "TemplateNavBar.html" %}
+{% block head %}
+    <script src="/libs/highcharts/7.2.0/highcharts.js"></script>
+{% endblock %}
+{% block title %}Compare Revenue{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="pie chart icon"></i>
+            <div class="content">
+                Compare Revenue
+            </div>
+        </h2>
+        {% if not error %}
+            <div class="ui segment">
+                <div class="ui grid">
+                    <div class="two column row">
+                        <div class="column">
+                            <div id="container_m" style="width: 100%; height: 400px; margin: 0 auto;"></div>
+                        </div>
+                        <div class="column">
+                            <div id="container_y" style="width: 100%; height: 400px; margin: 0 auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        Highcharts.chart('container_m', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Revenue Data in Last Month'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                name: 'Revenue',
+                colorByPoint: true,
+                data: [{
+                    name: 'Direct',
+                    y: {{ md }}
+                }, {
+                    name: 'Indirect',
+                    y: {{ mi }}
+                }]
+            }]
+        });
+        Highcharts.chart('container_y', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Revenue Data in Last Year'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                name: 'Revenue',
+                colorByPoint: true,
+                data: [{
+                    name: 'Direct',
+                    y: {{ yd }}
+                }, {
+                    name: 'Indirect',
+                    y: {{ yi }}
+                }]
+            }]
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "TemplateNavBar.html" %}
+{% block title %}Top Booking Agents{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="gem outline icon"></i>
+            <div class="content">
+                Top Booking Agents
+            </div>
+        </h2>
+        {% if dc and dtm and dty %}
+            <div class="ui segment">
+                <div class="ui grid">
+                    <div class="three column row">
+                        <div class="column">
+                            <h2 class="ui header">
+                                <i class="ticket icon"></i>
+                                <div class="content">
+                                    Sort By Ticket Amount in Last Month
+                                </div>
+                            </h2>
+                            <table class="ui striped table">
+                                <thead>
+                                <tr>
+                                    {% for col in htm %}
+                                        <th>{{ col }}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in dtm %}
+                                    <tr>
+                                        {% for col in row %}
+                                            <td>{{ col }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="column">
+                            <h2 class="ui header">
+                                <i class="ticket icon"></i>
+                                <div class="content">
+                                    Sort By Ticket Amount in Last Year
+                                </div>
+                            </h2>
+                            <table class="ui striped table">
+                                <thead>
+                                <tr>
+                                    {% for col in hty %}
+                                        <th>{{ col }}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in dty %}
+                                    <tr>
+                                        {% for col in row %}
+                                            <td>{{ col }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="column">
+                            <h2 class="ui header">
+                                <i class="dollar sign icon"></i>
+                                <div class="content">
+                                    Sort By Commission in Last Year
+                                </div>
+                            </h2>
+                            <table class="ui striped table">
+                                <thead>
+                                <tr>
+                                    {% for col in hc %}
+                                        <th>{{ col }}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in dc %}
+                                    <tr>
+                                        {% for col in row %}
+                                            <td>{{ col }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

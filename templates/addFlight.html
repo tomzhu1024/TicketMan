@@ -1,0 +1,47 @@
+{% extends "TemplateNavBar.html" %}
+{% block title %}Add Flight{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="add icon"></i>
+            <div class="content">
+                Add Flight
+            </div>
+        </h2>
+        <div class="ui {% if not success %}hidden {% endif %}success message">
+            <div class="header">Operation Succeeded</div>
+            {{ success }}
+        </div>
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+        {% if success %}
+            <button class="ui primary right floated button"
+                    onclick="window.location.href='{{ url_for('manage_flight_airline_staff') }}';">
+                <i class="arrow left icon"></i>
+                Back
+            </button>
+        {% else %}
+            <button class="ui primary right floated button"
+                    onclick="history.go(-1);">
+                <i class="arrow left icon"></i>
+                Back
+            </button>
+        {% endif %}
+        <div style="clear: both;"></div>
+
+    </div>
+{% endblock %}
+

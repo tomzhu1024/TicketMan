@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="/image/icon.png" rel="shortcut icon" type="image/png"/>
+    <link href="/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet"/>
+    <script src="/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Error - TicketMan</title>
+</head>
+<body>
+<div class="ui grid center aligned middle aligned segment" style="height: 100%; margin: 0;">
+    <div class="column center aligned" style="width: 60ch;">
+        <div class="ui red statistic">
+            <div class="value">
+                {% block error_code %}{% endblock %}
+            </div>
+            <div class="label">{% block error_name %}{% endblock %}</div>
+        </div>
+        <div class="ui message error">
+            <div class="header">Message</div>
+            <p>{{ message }}</p>
+        </div>
+        <button class="ui primary button" onclick="window.location.href='{{ url_for('home') }}';">
+            <i class="home icon"></i>
+            Go Home
+        </button>
+        <button class="ui secondary button" onclick="history.go(-1);">
+            <i class="arrow left icon"></i>
+            Previous Page
+        </button>
+    </div>
+</div>
+</body>
+</html>

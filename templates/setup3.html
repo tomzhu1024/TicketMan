@@ -1,0 +1,41 @@
+{% extends "TemplateSetup.html" %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="cubes icon"></i>
+            <div class="content">
+                Setup
+            </div>
+        </h2>
+        <div class="ui segment">
+            <div class="ui three steps">
+                <div class="completed step">
+                    <i class="database icon"></i>
+                    <div class="content">
+                        <div class="title">Database</div>
+                    </div>
+                </div>
+                <div class="completed step">
+                    <i class="user icon"></i>
+                    <div class="content">
+                        <div class="title">Admin Account</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <i class="flag checkered icon"></i>
+                    <div class="content">
+                        <div class="title">Finish</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui success message">
+                Congratulations! You have finished the setup and can now start to use TicketMan.
+            </div>
+            <button class="ui large fluid primary button" onclick="window.location.href='{{ url_for('home') }}';">
+                <i class="home icon"></i>
+                Home
+            </button>
+        </div>
+    </div>
+{% endblock %}

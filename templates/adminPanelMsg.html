@@ -1,0 +1,33 @@
+{% extends "TemplateNavBar.html" %}
+{% block title %}System Management{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="cogs icon"></i>
+            <div class="content">
+                System Management
+            </div>
+        </h2>
+        <div class="ui {% if not success %}hidden {% endif %}success message">
+            <div class="header">Operation Succeeded</div>
+            {{ success }}
+        </div>
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error %}
+                <div class="header">Operation Failed</div>
+                <ul class="list">
+                    {% for item in error %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <button class="ui primary right floated button"
+                onclick="window.location.href='{{ url_for('admin_panel') }}';">
+            <i class="arrow left icon"></i>
+            Back
+        </button>
+        <div style="clear: both;"></div>
+    </div>
+{% endblock %}
+

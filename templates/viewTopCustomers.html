@@ -1,0 +1,123 @@
+{% extends "TemplateNavBar.html" %}
+{% block head %}
+    <script src="/libs/highcharts/7.2.0/highcharts.js"></script>
+{% endblock %}
+{% block title %}Top Customers{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="gem outline icon"></i>
+            <div class="content">
+                Top Customers
+            </div>
+        </h2>
+        {% if not error %}
+            <div class="ui segments">
+                <div class="ui segment">
+                    <div id="container_t" style="width: 70%; height: 400px; margin: 0 auto;"></div>
+                </div>
+                <div class="ui segment">
+                    <div id="container_c" style="width: 70%; height: 400px; margin: 0 auto;"></div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="/js/calDo.js"></script>
+    <script>
+        var content = [];
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('POST', '{{ url_for('get_all_cities_and_airports') }}', true);
+        httpRequest.send();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                var response = JSON.parse(httpRequest.responseText);
+                for (var i = 0; i < response.length; i++) {
+                    content.push({'title': response[i]});
+                }
+                $('.ui.search').search({source: content});
+            }
+        };
+        $(document).ready(function () {
+            Highcharts.chart('container_c', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Top 5 Customers - Commission'
+                },
+                subtitle: {
+                    text: 'Booking Agent: {{ session.get('email') }}'
+                },
+                xAxis: {
+                    categories: {{ commission_x | safe }}
+                },
+                yAxis: {
+                    title: {
+                        text: 'Money ($)'
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        dataLabels: {
+                            enabled: true
+                        },
+                        enableMouseTracking: false
+                    }
+                },
+                series: [{
+                    name: 'Commission',
+                    data: {{ commission_data | safe }}
+                }]
+            });
+            Highcharts.chart('container_t', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Top 5 Customers - Ticket Amount'
+                },
+                subtitle: {
+                    text: 'Booking Agent: {{ session.get('email') }}'
+                },
+                xAxis: {
+                    categories: {{ ticket_x | safe }}
+                },
+                yAxis: {
+                    title: {
+                        text: 'Amount'
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        dataLabels: {
+                            enabled: true
+                        },
+                        enableMouseTracking: false
+                    }
+                },
+                series: [{
+                    name: 'Ticket Amount',
+                    data: {{ ticket_data | safe }}
+                }]
+            });
+        });
+    </script>
+{% endblock %}
+

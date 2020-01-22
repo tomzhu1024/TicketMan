@@ -1,0 +1,80 @@
+{% extends "TemplateNavBar.html" %}
+{% block title %}Add Airplane{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="large icons">
+                <i class="plane icon"></i>
+                <i class="inverted corner add icon"></i>
+            </i>
+            <div class="content">
+                Add Airplane
+            </div>
+        </h2>
+        <div class="ui segment">
+            <form class="ui large form" method="post">
+                <div class="two fields">
+                    <div class="field">
+                        <label>Airplane ID</label>
+                        <input name="airplane_id" type="text" required>
+                    </div>
+                    <div class="field">
+                        <label>Seats</label>
+                        <input name="seats" type="text" required>
+                    </div>
+                </div>
+                <button class="ui large primary button" type="submit" style="float: right;">
+                    <i class="add icon"></i>
+                    Add Airplane
+                </button>
+                <div style="clear: both"></div>
+            </form>
+        </div>
+        {% if data %}
+            <form class="ui large form">
+                <div class="ui segment">
+                    <table class="ui striped table">
+                        <thead>
+                        <tr>
+                            {% for col in head %}
+                                <th>{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in data %}
+                            <tr>
+                                {% for col in row %}
+                                    <td>{{ col }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                    <li><a href="{{ url_for('add_airplane') }}">Refresh</a> the page and retry.</li>
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                    <li><a href="{{ url_for('add_airplane') }}">Refresh</a> the page and retry.</li>
+                </ul>
+            {% endif %}
+        </div>
+        <div class="ui {% if not success %}hidden {% endif %}success message">
+            <div class="header">Operation Succeeded</div>
+            You have added an airplane. <a href="{{ url_for('add_airplane') }}">Refresh</a> to see the changes.
+        </div>
+    </div>
+{% endblock %}
+

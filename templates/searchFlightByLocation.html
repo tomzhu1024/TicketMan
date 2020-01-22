@@ -1,0 +1,171 @@
+{% extends "TemplateNavBar.html" %}
+{% block head %}
+    <link href="/libs/semantic-ui-calendar/0.0.8/calendar.min.css" rel="stylesheet"/>
+    <script src="/libs/semantic-ui-calendar/0.0.8/calendar.min.js"></script>
+{% endblock %}
+{% block title %}Search Flight{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="{% if session.get('isLogin') %}cart{% else %}search{% endif %} icon"></i>
+            <div class="content">
+                Search Flight
+            </div>
+        </h2>
+        <div class="ui {% if not success %}hidden {% endif %}success message">
+            <div class="header">Purchase Succeeded</div>
+            Now you can view your flight.<a href="{{ url_for('view_my_flight') }}"><u>View My Flight</u></a>
+        </div>
+        <div class="ui top attached tabular menu">
+            <a class="active item">
+                By Location
+            </a>
+            <a class="item" href="{{ url_for('search_flight_by_flight_num') }}">
+                By Flight Number
+            </a>
+        </div>
+        <div class="ui bottom attached segment">
+            <form class="ui large form" method="post">
+                <div class="fields">
+                    <div class="six wide field">
+                        <label>From</label>
+                        <div class="ui search">
+                            <div class="ui left icon input">
+                                <i class="map marker icon"></i>
+                                <input name="source" class="prompt" placeholder="City or Airport..." type="text"
+                                       required>
+                            </div>
+                            <div class="results"></div>
+                        </div>
+                    </div>
+                    <div class="six wide field">
+                        <label>To</label>
+                        <div class="ui search">
+                            <div class="ui left icon input">
+                                <i class="map marker icon"></i>
+                                <input name="destination" class="prompt" placeholder="City or Airport..." type="text"
+                                       required>
+                            </div>
+                            <div class="results"></div>
+                        </div>
+                    </div>
+                    <div class="four wide field">
+                        <label>Date</label>
+                        <div class="ui calendar">
+                            <div class="ui left icon input">
+                                <i class="calendar icon"></i>
+                                <input name="date" placeholder="YYYY/MM/DD" type="text" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="ui large primary button" type="submit" style="float: right;">
+                    <i class="search icon"></i>
+                    Search
+                </button>
+                <div style="clear: both"></div>
+            </form>
+        </div>
+        <form class="ui large form">
+            {% if session.get('isLogin') and session.get('type')=='booking_agent' %}
+                <div class="ui segment">
+                    <div class="field">
+                        <label>Customer Email</label>
+                        <div class="ui search">
+                            <div class="ui left icon input">
+                                <i class="mail icon"></i>
+                                <input name="customer_email" class="prompt" placeholder="Type to search..." type="text"
+                                       required>
+                            </div>
+                            <div class="results"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if data %}
+                <div class="ui segment">
+                    <table class="ui striped table">
+                        <thead>
+                        <tr>
+                            {% for col in head %}
+                                <th>{{ col }}</th>
+                            {% endfor %}
+                            <th class="right floating">Purchase</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in data %}
+                            <tr>
+                                {% for col in row[:-1] %}
+                                    <td>{{ col }}</td>
+                                {% endfor %}
+                                {% if row[-1] %}
+                                    <td class="right floating">
+                                        <button class="ui primary button" type="submit"
+                                                formaction="{{ row[-1] }}"
+                                                formmethod="post">
+                                            <i class="cart icon"></i>
+                                            Buy
+                                        </button>
+                                    </td>
+                                {% else %}
+                                    <td class="right floating"></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </form>
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="/js/calDo.js"></script>
+    <script>
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('POST', '{{ url_for('get_all_cities_and_airports') }}', true);
+        httpRequest.send();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                var response = JSON.parse(httpRequest.responseText);
+                var content = [];
+                for (var i = 0; i < response.length; i++) {
+                    content.push({'title': response[i]});
+                }
+                $('.ui.search:eq(0)').search({source: content});
+                $('.ui.search:eq(1)').search({source: content});
+            }
+        };
+        {% if session.get('isLogin') and session.get('type')=='booking_agent' %}
+            var httpRequest2 = new XMLHttpRequest();
+            httpRequest2.open('POST', '{{ url_for('get_all_customer_emails') }}', true);
+            httpRequest2.send();
+            httpRequest2.onreadystatechange = function () {
+                if (httpRequest2.readyState == 4 && httpRequest2.status == 200) {
+                    var response = JSON.parse(httpRequest2.responseText);
+                    var content = [];
+                    for (var i = 0; i < response.length; i++) {
+                        content.push({'title': response[i]});
+                    }
+                    $('.ui.search:eq(2)').search({source: content});
+                }
+            };
+        {% endif %}
+    </script>
+{% endblock %}

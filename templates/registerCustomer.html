@@ -1,0 +1,161 @@
+{% extends "TemplateNavBarLite.html" %}
+{% block head %}
+    <link href="/libs/semantic-ui-calendar/0.0.8/calendar.min.css" rel="stylesheet"/>
+    <script src="/libs/semantic-ui-calendar/0.0.8/calendar.min.js"></script>
+    <script src="/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+{% endblock %}
+{% block title %}Register{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header" style>
+            <i class="signup icon"></i>
+            <div class="content">
+                Register
+            </div>
+        </h2>
+        {% if not success %}
+            <div class="ui top attached tabular menu">
+                <a class="active item">
+                    Customer
+                </a>
+                <a class="item" href="{{ url_for('register_booking_agent') }}">
+                    Booking Agent
+                </a>
+                <a class="item" href="{{ url_for('register_airline_staff') }}">
+                    Airline Staff
+                </a>
+            </div>
+            <div class="ui bottom attached segment">
+                <form class="ui large form" method="post">
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Email</label>
+                            <input name="email" type="text">
+                        </div>
+                        <div class="field">
+                            <label>Name</label>
+                            <input name="name" type="text">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input name="password" placeholder="Password" type="password">
+                        </div>
+                        <div style="margin-top: 10px;" class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input placeholder="Confirm Password" type="password">
+                        </div>
+                    </div>
+                    <div class="fields">
+                        <div class="two wide field">
+                            <label>Building No.</label>
+                            <input name="building_number" type="text">
+                        </div>
+                        <div class="eight wide field">
+                            <label>Street</label>
+                            <input name="street" type="text">
+                        </div>
+                        <div class="three wide field">
+                            <label>City</label>
+                            <input name="city" type="text">
+                        </div>
+                        <div class="three wide field">
+                            <label>State</label>
+                            <input name="state" type="text">
+                        </div>
+                    </div>
+                    <div class="fields">
+                        <div class="twelve wide field">
+                            <label>Phone Number</label>
+                            <input name="phone_number" type="text">
+                        </div>
+                        <div class="four wide field">
+                            <label>Birthday</label>
+                            <div class="ui calendar">
+                                <div class="ui left icon input">
+                                    <i class="calendar icon"></i>
+                                    <input name="date_of_birth" placeholder="YYYY/MM/DD" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fields">
+                        <div class="eight wide field">
+                            <label>Passport Number</label>
+                            <input name="passport_number" type="text">
+                        </div>
+                        <div class="four wide field">
+                            <label>Passport Country</label>
+                            <input name="passport_country" type="text">
+                        </div>
+                        <div class="four wide field">
+                            <label>Passport Expiration</label>
+                            <div class="ui calendar">
+                                <div class="ui left icon input">
+                                    <i class="calendar icon"></i>
+                                    <input name="passport_expiration" placeholder="YYYY/MM/DD" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="ui large fluid button" type="submit">Submit</button>
+                </form>
+            </div>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+        <div class="ui {% if not success %}hidden {% endif %}success message">
+            <div class="header">Registration Succeeded</div>
+            Now you can log in to your account.<a href="{{ url_for('login_customer') }}"><u>Login</u></a>
+        </div>
+        <div class="ui {% if success %}hidden {% endif %}blue message">
+            <i class="icon large question"></i>
+            Already had an account?
+            <a href="{{ url_for('login_customer') }}"><u>Login</u></a>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="/js/calDo.js"></script>
+    <script src="/js/formVldt.js"></script>
+    <script>
+        $("form").submit(function () {
+            resetForm();
+            if (validateFieldAt(0, /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/, "Email must be in the format of someone@example.com.") &&
+                validateFieldAt(1, /^.+$/, "Name must be non-empty.") &&
+                validateFieldAt(2, /^.+$/, "Password must be non-empty.") &&
+                validatePasswordFieldAt(2, "Two passwords must be same.") &&
+                validateFieldAt(3, /^.+$/, "Building number must be non-empty.") &&
+                validateFieldAt(4, /^.+$/, "Street must be non-empty.") &&
+                validateFieldAt(5, /^.+$/, "City must be non-empty.") &&
+                validateFieldAt(6, /^.+$/, "State must be non-empty.") &&
+                validateFieldAt(7, /^\d+$/, "Phone number must be non-empty and all digits.") &&
+                validateFieldAt(8, /^\d{4}\/\d{2}\/\d{2}$/, "Birthday must be in the format of yyyy/mm/dd.") &&
+                validateFieldAt(9, /^.+$/, "Passport number must be non-empty.") &&
+                validateFieldAt(10, /^.+$/, "Passport country must be non-empty.") &&
+                validateFieldAt(11, /^\d{4}\/\d{2}\/\d{2}$/, "Passport expiration must be in the format of yyyy/mm/dd.")
+            ) {
+                hashFieldAt(2);
+                return true;
+            } else {
+                return false;
+            }
+        });
+    </script>
+{% endblock %}
+

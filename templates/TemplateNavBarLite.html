@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="/image/icon.png" rel="shortcut icon" type="image/png"/>
+    <link href="/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet"/>
+    <script src="/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    {% block head %}{% endblock %}
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} - TicketMan</title>
+</head>
+<body>
+<div class="ui fixed small menu inverted">
+    <a class="header item" href="{{ url_for('home') }}">
+        <img src="/image/icon.png" class="ui image" style="padding-right: 5px;width: 30px;">
+        <span style="font-style: oblique;">TicketMan</span>
+    </a>
+</div>
+<div style="height: 100%;">
+    {% block body %}{% endblock %}
+</div>
+</body>
+{% block script %}{% endblock %}
+</html>

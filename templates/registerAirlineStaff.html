@@ -1,0 +1,141 @@
+{% extends "TemplateNavBarLite.html" %}
+{% block head %}
+    <link href="/libs/semantic-ui-calendar/0.0.8/calendar.min.css" rel="stylesheet"/>
+    <script src="/libs/semantic-ui-calendar/0.0.8/calendar.min.js"></script>
+    <script src="/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+{% endblock %}
+{% block title %}Register{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header" style>
+            <i class="signup icon"></i>
+            <div class="content">
+                Register
+            </div>
+        </h2>
+        {% if not success %}
+            <div class="ui top attached tabular menu">
+                <a class="item" href="{{ url_for('register_customer') }}">
+                    Customer
+                </a>
+                <a class="item" href="{{ url_for('register_booking_agent') }}">
+                    Booking Agent
+                </a>
+                <a class="active item">
+                    Airline Staff
+                </a>
+            </div>
+            <div class="ui bottom attached segment">
+                <form class="ui large form" method="post">
+                    <div class="fields">
+                        <div class="eight wide field">
+                            <label>Username</label>
+                            <input name="username" type="text">
+                        </div>
+                        <div class="four wide field">
+                            <label>First Name</label>
+                            <input name="first_name" type="text">
+                        </div>
+                        <div class="four wide field">
+                            <label>Last Name</label>
+                            <input name="last_name" type="text">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input name="password" placeholder="Password" type="password">
+                        </div>
+                        <div style="margin-top: 10px;" class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input placeholder="Confirm Password" type="password">
+                        </div>
+                    </div>
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Birthday</label>
+                            <div class="ui calendar">
+                                <div class="ui left icon input">
+                                    <i class="calendar icon"></i>
+                                    <input name="date_of_birth" placeholder="YYYY/MM/DD" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>Airline Name</label>
+                            <div class="ui search">
+                                <div class="ui left icon input">
+                                    <i class="search icon"></i>
+                                    <input name="airline_name" class="prompt" placeholder="Type to search..."
+                                           type="text">
+                                </div>
+                                <div class="results"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="ui large fluid button" type="submit">Submit</button>
+                </form>
+            </div>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+        <div class="ui {% if not success %}hidden {% endif %}success message">
+            <div class="header">Registration Succeeded</div>
+            Now you can log in to your account.<a href="{{ url_for('login_airline_staff') }}"><u>Login</u></a>
+        </div>
+        <div class="ui {% if success %}hidden {% endif %}blue message">
+            <i class="icon large question"></i>
+            Already had an account?
+            <a href="{{ url_for('login_airline_staff') }}"><u>Login</u></a>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="/js/calDo.js"></script>
+    <script src="/js/formVldt.js"></script>
+    <script>
+        $("form").submit(function () {
+            resetForm();
+            if (validateFieldAt(0, /^.+$/, "Username must be non-empty.") &&
+                validateFieldAt(1, /^.+$/, "First name must be non-empty.") &&
+                validateFieldAt(2, /^.+$/, "Last name must be non-empty.") &&
+                validateFieldAt(3, /^.+$/, "Password must be non-empty.") &&
+                validatePasswordFieldAt(3, "Two passwords must be same.") &&
+                validateFieldAt(4, /^\d{4}\/\d{2}\/\d{2}$/, "Birthday must be in the format of yyyy/mm/dd.") &&
+                validateFieldAt(5, /^.+$/, "Airline name must be non-empty.")
+            ) {
+                hashFieldAt(3);
+                return true;
+            } else {
+                return false;
+            }
+        });
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('POST', "{{ url_for('get_all_airlines') }}", true);
+        httpRequest.send();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                var response = JSON.parse(httpRequest.responseText);
+                var content = [];
+                for (var i = 0; i < response.length; i++) {
+                    content.push({'title': response[i]});
+                }
+                $('.ui.search').search({source: content});
+            }
+        };
+    </script>
+{% endblock %}

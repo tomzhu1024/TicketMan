@@ -1,0 +1,42 @@
+{% extends "TemplateNavBar.html" %}
+{% block title %}Frequent Customer{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="user icon"></i>
+            <div class="content">
+                Frequent Customer
+            </div>
+        </h2>
+        {% if email %}
+            <div class="ui segments">
+                {% for item in email %}
+                    <div class="ui center aligned segment">
+                        <div class="ui statistic">
+                            <div class="value">
+                                <i class="trophy icon"></i>
+                                {{ item }}
+                            </div>
+                            <div class="label">the most frequent customer</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

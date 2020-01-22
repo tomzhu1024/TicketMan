@@ -1,0 +1,298 @@
+{% extends "TemplateNavBar.html" %}
+{% block head %}
+    <link href="/libs/semantic-ui-calendar/0.0.8/calendar.min.css" rel="stylesheet"/>
+    <script src="/libs/semantic-ui-calendar/0.0.8/calendar.min.js"></script>
+{% endblock %}
+{% block title %}Manage Flight{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="settings icon"></i>
+            <div class="content">
+                Manage Flight
+            </div>
+        </h2>
+        <div class="ui {% if not success %}hidden {% endif %}success message">
+            <div class="header">Operation Succeeded</div>
+            {{ success }}
+        </div>
+        <div class="ui segment">
+            <h2 class="ui header">
+                <i class="add icon"></i>
+                <div class="content">
+                    Add Flight
+                </div>
+            </h2>
+            <form class="ui large form" method="post" action="{{ url_for('add_flight') }}">
+                <div class="four fields">
+                    <div class="field">
+                        <label>Departure Airport</label>
+                        <div class="ui search">
+                            <div class="ui left icon input">
+                                <i class="map marker icon"></i>
+                                <input name="departure_airport" class="prompt" placeholder="Airport..." type="text"
+                                       required>
+                            </div>
+                            <div class="results"></div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Departure Time</label>
+                        <div class="ui calendar dt">
+                            <div class="ui left icon input">
+                                <i class="time icon"></i>
+                                <input name="departure_time" placeholder="YYYY/MM/DD HH:mm" type="text" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Arrival Airport</label>
+                        <div class="ui search">
+                            <div class="ui left icon input">
+                                <i class="map marker icon"></i>
+                                <input name="arrival_airport" class="prompt" placeholder="Airport..." type="text"
+                                       required>
+                            </div>
+                            <div class="results"></div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Arrival Time</label>
+                        <div class="ui calendar dt">
+                            <div class="ui left icon input">
+                                <i class="time icon"></i>
+                                <input name="arrival_time" placeholder="YYYY/MM/DD HH:mm" type="text" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="four fields">
+                    <div class="field">
+                        <label>Flight Num</label>
+                        <input name="flight_num" type="text" required>
+                    </div>
+                    <div class="field">
+                        <label>Price</label>
+                        <input name="price" type="text" required>
+                    </div>
+                    <div class="field">
+                        <label>Status</label>
+                        <input name="status" type="text" required>
+                    </div>
+                    <div class="field">
+                        <label>Airplane ID</label>
+                        <div class="ui search">
+                            <div class="ui left icon input">
+                                <i class="plane icon"></i>
+                                <input name="airplane_id" class="prompt" placeholder="Airplane ID..." type="text"
+                                       required>
+                            </div>
+                            <div class="results"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="ui large primary button" type="submit" style="float: right;">
+                    <i class="add icon"></i>
+                    Add Flight
+                </button>
+                <div style="clear: both"></div>
+            </form>
+        </div>
+        <div class="ui segment">
+            <h2 class="ui header">
+                <i class="filter icon"></i>
+                <div class="content">
+                    Filter Flight
+                </div>
+            </h2>
+            <form class="ui large form" method="post">
+                <div class="three fields">
+                    <div class="six wide field">
+                        <label>Source/Destination</label>
+                        <div class="ui search">
+                            <div class="ui left icon input">
+                                <i class="map marker icon"></i>
+                                <input name="location" class="prompt" placeholder="City or Airport..." type="text">
+                            </div>
+                            <div class="results"></div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Start Date</label>
+                        <div class="ui calendar do">
+                            <div class="ui left icon input">
+                                <i class="calendar icon"></i>
+                                <input name="start_date" placeholder="YYYY/MM/DD" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>End Date</label>
+                        <div class="ui calendar do">
+                            <div class="ui left icon input">
+                                <i class="calendar icon"></i>
+                                <input name="end_date" placeholder="YYYY/MM/DD" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="ui large primary button" type="submit" style="float: right;">
+                    <i class="filter icon"></i>
+                    Filter
+                </button>
+                <div style="clear: both"></div>
+            </form>
+        </div>
+        {% if data %}
+            <form class="ui large form">
+                <div class="ui segment">
+                    <div class="fields">
+                        <div class="thirteen wide field"></div>
+                        <div class="three wide field">
+                            <label>New Status</label>
+                            <div class="ui left icon input">
+                                <i class="flag icon"></i>
+                                <input name="new_status" type="text" required>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="ui striped table">
+                        <thead>
+                        <tr>
+                            {% for col in head %}
+                                <th>{{ col }}</th>
+                            {% endfor %}
+                            <th class="right floating">View Passengers</th>
+                            <th class="right floating">Update Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in data %}
+                            <tr>
+                                {% for col in row[:-2] %}
+                                    <td>{{ col }}</td>
+                                {% endfor %}
+                                <td class="right floating">
+                                    <div class="ui primary button"
+                                         onclick="window.location.href='{{ row[-2] }}';">
+                                        <i class="users icon"></i>
+                                        View
+                                    </div>
+                                </td>
+                                <td class="right floating">
+                                    <button class="ui secondary button" type="submit"
+                                            formaction="{{ row[-1] }}"
+                                            formmethod="post">
+                                        <i class="flag icon"></i>
+                                        Set
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        var calendarOptsDt = {
+            type: 'datetime',
+            ampm: false,
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate() + '';
+                    if (day.length < 2) {
+                        day = '0' + day;
+                    }
+                    var month = (date.getMonth() + 1) + '';
+                    if (month.length < 2) {
+                        month = '0' + month;
+                    }
+                    var year = date.getFullYear();
+                    return year + '/' + month + '/' + day;
+                }
+            }
+        };
+        $(".ui.calendar.dt").calendar(calendarOptsDt);
+        var calendarOptsDo = {
+            type: 'date',
+            formatter: {
+                date: function (date, settings) {
+                    if (!date) return '';
+                    var day = date.getDate() + '';
+                    if (day.length < 2) {
+                        day = '0' + day;
+                    }
+                    var month = (date.getMonth() + 1) + '';
+                    if (month.length < 2) {
+                        month = '0' + month;
+                    }
+                    var year = date.getFullYear();
+                    return year + '/' + month + '/' + day;
+                }
+            }
+        };
+        $(".ui.calendar.do").calendar(calendarOptsDo);
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('POST', '{{ url_for('get_all_cities_and_airports') }}', true);
+        httpRequest.send();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                var content = [];
+                var response = JSON.parse(httpRequest.responseText);
+                for (var i = 0; i < response.length; i++) {
+                    content.push({'title': response[i]});
+                }
+                $('.ui.search:eq(3)').search({source: content});
+            }
+        };
+        var httpRequest2 = new XMLHttpRequest();
+        httpRequest2.open('POST', '{{ url_for('get_all_airports') }}', true);
+        httpRequest2.send();
+        httpRequest2.onreadystatechange = function () {
+            if (httpRequest2.readyState == 4 && httpRequest2.status == 200) {
+                var content = [];
+                var response = JSON.parse(httpRequest2.responseText);
+                for (var i = 0; i < response.length; i++) {
+                    content.push({'title': response[i]});
+                }
+                $('.ui.search:eq(0)').search({source: content});
+                $('.ui.search:eq(1)').search({source: content});
+
+            }
+        };
+        var httpRequest3 = new XMLHttpRequest();
+        httpRequest3.open('POST', '{{ url_for('get_all_airplane_id') }}', true);
+        httpRequest3.send();
+        httpRequest3.onreadystatechange = function () {
+            if (httpRequest3.readyState == 4 && httpRequest3.status == 200) {
+                var content = [];
+                var response = JSON.parse(httpRequest3.responseText);
+                for (var i = 0; i < response.length; i++) {
+                    content.push({'title': response[i].toString()});
+                }
+                $('.ui.search:eq(2)').search({source: content});
+            }
+        };
+    </script>
+{% endblock %}
+

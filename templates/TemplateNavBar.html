@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="/image/icon.png" rel="shortcut icon" type="image/png"/>
+    <link href="/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet"/>
+    <script src="/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    {% block head %}{% endblock %}
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} - TicketMan</title>
+</head>
+<body>
+<div class="ui inverted {% if session.get('isLogin') and session.get('type')=='admin' %}red {% endif %}small fixed menu">
+    <a class="header item" href="{{ url_for('home') }}">
+        <img src="/image/icon.png" class="ui image" style="padding-right: 5px;width: 30px;">
+        <span style="font-style: oblique;">TicketMan</span>
+    </a>
+    {% if not session.get('isLogin') %}
+        <a class="item" href="{{ url_for('search_flight_by_location') }}">
+            <i class="search icon"></i>
+            Public Search
+        </a>
+    {% elif session.get('isLogin') and session.get('type')=='customer' %}
+        <a class="item" href="{{ url_for('search_flight_by_location') }}">
+            <i class="cart icon"></i>
+            Search/Purchase
+        </a>
+        <a class="item" href="{{ url_for('view_my_flight') }}">
+            <i class="calendar check outline icon"></i>
+            My Flight
+        </a>
+        <a class="item" href="{{ url_for('track_my_spending') }}">
+            <i class="dollar sign icon"></i>
+            My Spending
+        </a>
+    {% elif session.get('isLogin') and session.get('type')=='booking_agent' %}
+        <a class="item" href="{{ url_for('search_flight_by_location') }}">
+            <i class="cart icon"></i>
+            Search/Purchase
+        </a>
+        <a class="item" href="{{ url_for('view_my_flight') }}">
+            <i class="calendar check outline icon"></i>
+            My Flight
+        </a>
+        <a class="item" href="{{ url_for('view_my_commission') }}">
+            <i class="bullhorn icon"></i>
+            My Commission
+        </a>
+        <a class="item" href="{{ url_for('view_top_customers') }}">
+            <i class="gem outline icon"></i>
+            Top Customers
+        </a>
+    {% elif session.get('isLogin') and session.get('type')=='airline_staff' %}
+        <a class="item" href="{{ url_for('manage_flight_airline_staff') }}">
+            <i class="settings icon"></i>
+            View/Manage Flight
+        </a>
+        <div class="ui simple dropdown item">
+            <i class="add icon"></i>
+            Create New
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="{{ url_for('add_airplane') }}">
+                    <i class="plane icon"></i>
+                    Airplane
+                </a>
+                <a class="item" href="{{ url_for('add_airport') }}">
+                    <i class="map marker icon"></i>
+                    Airport
+                </a>
+            </div>
+        </div>
+        <div class="ui simple dropdown item">
+            <i class="file alternate outline icon"></i>
+            Statistical Reports
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="{{ url_for('view_top_booking_agents') }}">
+                    <i class="gem outline icon"></i>
+                    Top Booking Agents
+                </a>
+                <a class="item" href="{{ url_for('view_frequent_customer') }}">
+                    <i class="user icon"></i>
+                    Top Frequent Customer
+                </a>
+                <a class="item" href="{{ url_for('view_customer_flight_history') }}">
+                    <i class="history icon"></i>
+                    Customer Flight History
+                </a>
+                <a class="item" href="{{ url_for('total_ticket_sold') }}">
+                    <i class="ticket icon"></i>
+                    Total Ticket Sold
+                </a>
+                <a class="item" href="{{ url_for('compare_revenue') }}">
+                    <i class="pie chart icon"></i>
+                    Compare Revenue
+                </a>
+                <a class="item" href="{{ url_for('view_top_destinations') }}">
+                    <i class="trophy icon"></i>
+                    Top Destinations
+                </a>
+            </div>
+        </div>
+    {% elif session.get('isLogin') and session.get('type')=='admin' %}
+        <a class="item" href="{{ url_for('admin_panel') }}">
+            <i class="cogs icon"></i>
+            System Management
+        </a>
+    {% endif %}
+    <div class="right menu">
+        {% if session.get('isLogin') %}
+            <div class="ui simple dropdown item">
+                <i class="user outline icon"></i>
+                {{ session.get('displayName') }}
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div class="header">
+                        welcome
+                    </div>
+                    <div class="item">
+                        <i class="user outline icon"></i>
+                        Account Type: <span style="font-weight: bold;">{{ session.get('displayType') }}</span>
+                    </div>
+                    <div class="divider"></div>
+                    <a class="item" href="{{ url_for('logout') }}">
+                        <i class="sign-out icon"></i>
+                        Log Out
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <a class="item" href="{{ url_for('login_customer') }}">
+                <i class="sign-in icon"></i>
+                Login
+            </a>
+            <a class="item" href="{{ url_for('register_customer') }}">
+                <i class="signup outline icon"></i>
+                Register
+            </a>
+        {% endif %}
+    </div>
+</div>
+<div style="height: 100%;">
+    {% block body %}{% endblock %}
+</div>
+</body>
+{% block script %}{% endblock %}
+</html>

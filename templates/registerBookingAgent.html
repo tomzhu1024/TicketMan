@@ -1,0 +1,96 @@
+{% extends "TemplateNavBarLite.html" %}
+{% block head %}
+    <script src="/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+{% endblock %}
+{% block title %}Register{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header" style>
+            <i class="signup icon"></i>
+            <div class="content">
+                Register
+            </div>
+        </h2>
+        {% if not success %}
+            <div class="ui top attached tabular menu">
+                <a class="item" href="{{ url_for('register_customer') }}">
+                    Customer
+                </a>
+                <a class="active item">
+                    Booking Agent
+                </a>
+                <a class="item" href="{{ url_for('register_airline_staff') }}">
+                    Airline Staff
+                </a>
+            </div>
+            <div class="ui bottom attached segment">
+                <form class="ui large form" method="post">
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Email</label>
+                            <input name="email" type="text">
+                        </div>
+                        <div class="field">
+                            <label>Booking Agent ID</label>
+                            <input name="booking_agent_id" type="text">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input name="password" placeholder="Password" type="password">
+                        </div>
+                        <div style="margin-top: 10px;" class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input placeholder="Confirm Password" type="password">
+                        </div>
+                    </div>
+                    <button class="ui large fluid button" type="submit">Submit</button>
+                </form>
+            </div>
+        {% endif %}
+        <div class="ui {% if not error %}hidden {% endif %}error message">
+            {% if error is defined and error is not string %}
+                <div class="header">{{ error[0] }}</div>
+                <ul class="list">
+                    {% for item in error[1:] %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="header">An Error Occurred</div>
+                <ul class="list">
+                    <li>{{ error }}</li>
+                </ul>
+            {% endif %}
+        </div>
+        <div class="ui {% if not success %}hidden {% endif %}success message">
+            <div class="header">Registration Succeeded</div>
+            Now you can log in to your account.<a href="{{ url_for('login_booking_agent') }}"><u>Login</u></a>
+        </div>
+        <div class="ui {% if success %}hidden {% endif %}blue message">
+            <i class="icon large question"></i>
+            Already had an account?
+            <a href="{{ url_for('login_booking_agent') }}"><u>Login</u></a>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="/js/formVldt.js"></script>
+    <script>
+        $("form").submit(function () {
+            resetForm();
+            if (validateFieldAt(0, /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/, "Email must be in the format of someone@example.com.") &&
+                validateFieldAt(1, /^\d+$/, "Booking agent ID must be non-empty and only contains digits.") &&
+                validateFieldAt(2, /^.+$/, "Password must be non-empty.") &&
+                validatePasswordFieldAt(2, "Two passwords must be same.")
+            ) {
+                hashFieldAt(2);
+                return true;
+            } else {
+                return false;
+            }
+        });
+    </script>
+{% endblock %}

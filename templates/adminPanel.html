@@ -1,0 +1,31 @@
+{% extends "TemplateNavBar.html" %}
+{% block title %}System Management{% endblock %}
+{% block body %}
+    <div class="ui container" style="padding-top: 8em;padding-bottom: 5%;">
+        <h2 class="ui header">
+            <i class="cogs icon"></i>
+            <div class="content">
+                System Management
+            </div>
+        </h2>
+        <div class="ui segments" style="width: 40%;margin-left: 30%;">
+            <div class="ui segment">
+                <form method="post">
+                    <button class="ui blue large fluid button" type="submit" name="action" value="import_test_data">
+                        <i class="download icon"></i>
+                        Import Test Data
+                    </button>
+                </form>
+            </div>
+            <div class="ui segment">
+                <form method="post">
+                    <button class="ui red large fluid button" type="submit" name="action" value="purge_all_data">
+                        <i class="trash alternate icon"></i>
+                        Purge All Data
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
